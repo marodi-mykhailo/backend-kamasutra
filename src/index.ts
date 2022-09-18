@@ -1,16 +1,24 @@
-import express, { Express, Request, Response } from 'express';
-import dotenv from 'dotenv';
+import express from 'express';
+import cors from 'cors';
+import bodyParser from 'body-parser';
+import { config } from 'dotenv';
+import { videosRouter } from './routes/videos/videos-router';
+import { Repository } from '@repositories/repository';
+import { VideoInterface } from '@interfaces';
+import { testingRouter } from './routes/testing/testing-router';
 
-dotenv.config();
+config();
+export const app = express();
+const port = process.env.PORT || 3000;
 
-const app: Express = express();
+export const videosRepository = new Repository<VideoInterface>([]);
 
-const PORT = process.env.PORT;
+app.use(cors());
+app.use(bodyParser.json());
 
-app.get('/', (request: Request, response: Response) => {
-      response.send('OK!!!@@@@');
-});
+app.use('/videos', videosRouter);
+app.use('/testing', testingRouter);
 
-app.listen(PORT, () => {
-    console.log(`App is listening on port ${PORT}`);
+app.listen(port, () => {
+	console.log(`IT-Incubator Video Api has been started at port: ${port}`);
 });
